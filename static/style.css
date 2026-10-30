@@ -1,0 +1,370 @@
+
+/* ==========================================
+   DeployEase - Complete Dashboard Stylesheet
+   ========================================== */
+
+/* Global Styles */
+
+:root {
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    color: #e9edf9;
+    background: #0a1020;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background:
+        radial-gradient(
+            circle at 75% 0,
+            #172b50 0,
+            transparent 42%
+        ),
+        #0a1020;
+    min-height: 100vh;
+}
+
+/* Main Layout */
+
+.shell {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 34px 22px;
+}
+
+/* Header */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 76px;
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: 800;
+    color: #f4f6ff;
+}
+
+.pill,
+.tag {
+    border: 1px solid #3d5074;
+    color: #b6c7f2;
+    border-radius: 30px;
+    padding: 8px 13px;
+    font-size: 12px;
+}
+
+.tag {
+    white-space: nowrap;
+}
+
+/* Hero Section */
+
+.hero {
+    margin-bottom: 35px;
+}
+
+.eyebrow {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #8faeff;
+}
+
+.hero h1 {
+    font-size: clamp(36px, 7vw, 66px);
+    letter-spacing: -2px;
+    margin: 12px 0;
+}
+
+.hero p,
+.heading p {
+    color: #a4b2cc;
+    line-height: 1.6;
+}
+
+/* Dashboard Panels */
+
+.panel {
+    background: #141e34;
+    border: 1px solid #2b3b59;
+    border-radius: 18px;
+    padding: 27px;
+    margin-bottom: 20px;
+    box-shadow: 0 12px 40px #0002;
+}
+
+.panel h2 {
+    margin: 0 0 8px;
+    font-size: 21px;
+}
+
+/* Section Headings */
+
+.heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+/* Deployment Buttons */
+
+.actions {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 24px 0;
+}
+
+button {
+    border: 0;
+    background: #6e93ff;
+    color: #071125;
+    border-radius: 10px;
+    padding: 13px 20px;
+    font-weight: 750;
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+        filter 0.2s ease,
+        transform 0.2s ease;
+}
+
+button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.secondary {
+    background: #263855;
+    color: #e4ebff;
+}
+
+/* Jenkins Connection Message */
+
+#message {
+    color: #b5c6e8;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* Latest Jenkins Build */
+
+.stats {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 100px;
+    margin: 25px 0;
+}
+
+.stats div {
+    display: grid;
+    gap: 10px;
+}
+
+.stats small {
+    color: #9eafca;
+    font-size: 13px;
+}
+
+.stats strong {
+    font-size: 22px;
+    font-weight: 750;
+}
+
+/* Build Status Colors */
+
+.success-text {
+    color: #4ade80 !important;
+}
+
+.failure-text {
+    color: #fb7185 !important;
+}
+
+.running-text {
+    color: #facc15 !important;
+}
+
+/* Jenkins Build Link */
+
+a {
+    color: #98b8ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================
+   Live Deployment Logs
+   ========================================== */
+
+.log-box {
+    background: #080f1f;
+    border: 1px solid #2b3b59;
+    color: #b9f5d0;
+    border-radius: 12px;
+    padding: 20px;
+    height: 350px;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 18px;
+}
+
+/* Custom Log Scrollbar */
+
+.log-box::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+.log-box::-webkit-scrollbar-track {
+    background: #0c1528;
+    border-radius: 10px;
+}
+
+.log-box::-webkit-scrollbar-thumb {
+    background: #344b70;
+    border-radius: 10px;
+}
+
+.log-box::-webkit-scrollbar-thumb:hover {
+    background: #5473a5;
+}
+
+/* ==========================================
+   Deployment History
+   ========================================== */
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #e9edf9;
+}
+
+.history-table th,
+.history-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #30405d;
+    font-size: 14px;
+}
+
+.history-table th {
+    color: #9eafca;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.history-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.history-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* Footer */
+
+footer {
+    text-align: center;
+    color: #7e91b0;
+    font-size: 13px;
+    margin: 35px 0;
+}
+
+/* ==========================================
+   Responsive Design
+   ========================================== */
+
+@media (max-width: 650px) {
+
+    .shell {
+        padding: 22px 15px;
+    }
+
+    header {
+        margin-bottom: 45px;
+        flex-wrap: wrap;
+    }
+
+    .brand {
+        font-size: 21px;
+    }
+
+    .hero h1 {
+        letter-spacing: -1px;
+    }
+
+    .panel {
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .heading {
+        display: block;
+    }
+
+    .tag {
+        display: inline-block;
+        margin-top: 12px;
+    }
+
+    .actions {
+        gap: 10px;
+    }
+
+    button {
+        padding: 12px 15px;
+        font-size: 13px;
+    }
+
+    .stats {
+        gap: 50px;
+        flex-wrap: wrap;
+    }
+
+    .stats strong {
+        font-size: 20px;
+    }
+
+    .log-box {
+        height: 280px;
+        padding: 14px;
+        font-size: 12px;
+    }
+
+    .history-table th,
+    .history-table td {
+        padding: 10px;
+        font-size: 12px;
+    }
+}

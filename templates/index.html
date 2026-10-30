@@ -1,0 +1,289 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DeployEase</title>
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+<main class="shell">
+
+  <header>
+    <div class="brand">◆ DeployEase</div>
+    <span class="pill">Local DevOps Portal</span>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow">DEPLOYMENT CONTROL CENTER</p>
+    <h1>Ship confidently.</h1>
+    <p>
+      Build, test and deploy your Java application
+      using Jenkins and Ansible.
+    </p>
+  </section>
+
+  <section class="panel">
+    <div class="heading">
+      <div>
+        <h2>Java Sample Application</h2>
+        <p>Jenkins → Maven → Ansible → WSL Ubuntu</p>
+      </div>
+      <span class="tag">DeployEase-Pipeline</span>
+    </div>
+
+    <div class="actions">
+      <button id="deploy">Deploy application</button>
+      <button id="refresh" class="secondary">
+        Refresh status
+      </button>
+    </div>
+
+    <div id="message" role="status">
+      Connecting to Jenkins...
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Latest Jenkins Build</h2>
+
+    <div class="stats">
+      <div>
+        <small>Build</small>
+        <strong id="number">—</strong>
+      </div>
+
+      <div>
+        <small>Status</small>
+        <strong id="status">Checking...</strong>
+      </div>
+    </div>
+
+    <a id="buildLink"
+       target="_blank"
+       rel="noopener noreferrer"
+       hidden>
+      Open build in Jenkins ↗
+    </a>
+  </section>
+
+  <section class="panel">
+    <div class="heading">
+      <h2>Live Deployment Logs</h2>
+      <span class="tag">Jenkins Console</span>
+    </div>
+
+    <pre id="deploymentLogs" class="log-box">
+Waiting for Jenkins logs...
+    </pre>
+  </section>
+
+  <section class="panel">
+    <h2>Deployment History</h2>
+
+    <div class="table-wrap">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Build</th>
+            <th>Status</th>
+            <th>Duration</th>
+            <th>Started</th>
+          </tr>
+        </thead>
+
+        <tbody id="buildHistory">
+          <tr>
+            <td colspan="4">Loading build history...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    Runs locally · No Azure resources required
+  </footer>
+
+</main>
+
+<script>
+const msg = document.getElementById("message");
+const deployBtn = document.getElementById("deploy");
+
+async function getJSON(url, options = {}) {
+  const response = await fetch(url, {
+    cache: "no-store",
+    ...options
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || "Request failed");
+  }
+
+  return data;
+}
+
+// Latest Jenkins build
+async function refresh() {
+  try {
+    const data = await getJSON("/api/status");
+
+    document.getElementById("number").textContent =
+      data.number == null ? "—" : "#" + data.number;
+
+    const status = data.building
+      ? "RUNNING"
+      : (data.result || "UNKNOWN");
+
+    const statusEl = document.getElementById("status");
+    statusEl.textContent = status;
+
+    statusEl.className =
+      status === "SUCCESS" ? "success-text" :
+      status === "FAILURE" ? "failure-text" :
+      "running-text";
+
+    const link = document.getElementById("buildLink");
+    link.hidden = !data.url;
+
+    if (data.url) {
+      link.href = data.url;
+    }
+
+    msg.textContent = "Connected to Jenkins.";
+
+  } catch (error) {
+    msg.textContent = "Status unavailable: " + error.message;
+  }
+}
+
+// Trigger deployment
+deployBtn.addEventListener("click", async () => {
+  deployBtn.disabled = true;
+  msg.textContent = "Requesting deployment...";
+
+  try {
+    const data = await getJSON("/api/deploy", {
+      method: "POST"
+    });
+
+    msg.textContent = data.message;
+
+    setTimeout(() => {
+      refresh();
+      loadLogs();
+      loadHistory();
+    }, 2000);
+
+  } catch (error) {
+    msg.textContent =
+      "Deployment not started: " + error.message;
+  } finally {
+    deployBtn.disabled = false;
+  }
+});
+
+document.getElementById("refresh")
+  .addEventListener("click", () => {
+    refresh();
+    loadLogs();
+    loadHistory();
+  });
+
+// Jenkins console logs
+async function loadLogs() {
+  const logBox = document.getElementById("deploymentLogs");
+
+  try {
+    const data = await getJSON("/api/logs");
+
+    // Remove terminal color codes
+    const cleanLogs = data.logs.replace(
+      /\x1b\[[0-9;]*m/g, ""
+    );
+
+    const nearBottom =
+      logBox.scrollTop + logBox.clientHeight >=
+      logBox.scrollHeight - 40;
+
+    logBox.textContent = cleanLogs;
+
+    if (nearBottom) {
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+  } catch (error) {
+    logBox.textContent = "Logs unavailable: " + error.message;
+  }
+}
+
+// Previous Jenkins builds
+async function loadHistory() {
+  const tbody = document.getElementById("buildHistory");
+
+  try {
+    const data = await getJSON("/api/builds");
+    tbody.replaceChildren();
+
+    if (!data.builds.length) {
+      const row = tbody.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = 4;
+      cell.textContent = "No deployments yet";
+      return;
+    }
+
+    data.builds.forEach(build => {
+      const row = tbody.insertRow();
+
+      row.insertCell().textContent = "#" + build.number;
+
+      const status = build.building
+        ? "RUNNING"
+        : (build.result || "UNKNOWN");
+
+      const statusCell = row.insertCell();
+      statusCell.textContent = status;
+
+      statusCell.className =
+        status === "SUCCESS" ? "success-text" :
+        status === "FAILURE" ? "failure-text" :
+        "running-text";
+
+      row.insertCell().textContent =
+        build.building
+          ? "In progress"
+          : (build.duration / 1000).toFixed(1) + " sec";
+
+      row.insertCell().textContent =
+        new Date(build.timestamp).toLocaleString();
+    });
+
+  } catch (error) {
+    tbody.replaceChildren();
+    const row = tbody.insertRow();
+    const cell = row.insertCell();
+    cell.colSpan = 4;
+    cell.textContent = "History unavailable: " + error.message;
+  }
+}
+
+// Initial loading
+refresh();
+loadLogs();
+loadHistory();
+
+// Automatic updates
+setInterval(refresh, 5000);
+setInterval(loadHistory, 5000);
+setInterval(loadLogs, 3000);
+</script>
+
+</body>
+</html>
