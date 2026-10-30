@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 public class App {
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(
-            new InetSocketAddress("127.0.0.1", 8081), 0
+            new InetSocketAddress("0.0.0.0", 8081)
         );
 
         server.createContext("/", exchange -> {
