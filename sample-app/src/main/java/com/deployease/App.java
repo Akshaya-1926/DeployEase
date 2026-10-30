@@ -37,3 +37,5 @@ public class App {
         System.out.println("Application running on port 8081");
     }
 }
+// Automatic deployment test
+// Automatic deployment test
