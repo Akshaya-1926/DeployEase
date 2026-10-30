@@ -16,9 +16,22 @@ pipeline {
         stage('Build Java Application') {
             steps {
                 dir('sample-app') {
-                    sh 'mvn clean package'
+                    sh 'mvn clean package -DskipTests'
                 }
             }
+        }
+        
+        stage('Run JUnit Tests') {
+            steps {
+                dir('sample-app') {
+ 		   sh 'mvn test'
+           }
+        }
+   	    post {
+               always {
+                  junit 'sample-app/target/surefire-reports/*.xml'
+              }
+          }
         }
 
         stage('Deploy with Ansible') {
