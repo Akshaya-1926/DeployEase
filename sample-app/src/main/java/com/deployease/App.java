@@ -16,7 +16,7 @@ public class App {
                 <html>
                 <body style="font-family:Arial;text-align:center;
                              padding:80px;background:#eef5ff">
-                  <h1>DeployEase Deployment Successful!</h1>
+                  <h1>DeployEase CI/CD Pipeline Successfully Tested!</h1>
                   <h2>Java + Maven + Jenkins + Ansible</h2>
                   <p>Application deployed automatically.</p>
                 </body>
