@@ -7,13 +7,13 @@
 
   tasks:
     - name: Create deployment folder
-      file:
+      ansible.builtin.file:
         path: /var/lib/jenkins/deployease-app
         state: directory
         mode: '0755'
 
     - name: Copy Java JAR file
-      copy:
-        src: /var/lib/jenkins/deployease-source/sample-app/target/sample-app-1.0.jar
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/sample-app/target/sample-app-1.0.jar"
         dest: /var/lib/jenkins/deployease-app/app.jar
         mode: '0644'
